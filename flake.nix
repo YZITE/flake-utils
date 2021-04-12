@@ -12,5 +12,12 @@
           defaultProgName = progname;
         };
     };
+
+    templates = {
+      rust = {
+        path = ./templates/rust;
+        description = "A custom rust binary crate package";
+      };
+    };
   };
 }
