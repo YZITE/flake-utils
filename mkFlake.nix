@@ -16,24 +16,23 @@ let
         overlays = [ overlay ];
       };
       packages = allpkgs.lib.attrsets.filterAttrs (n: v: dummyov ? ${n}) allpkgs;
-    in
-    {
-      packages = packages;
-      apps = builtins.mapAttrs
-        (n: drv: {
-        type = "app";
-        program = drv.outPath
-          + (drv.passthru.exePath or ("/bin/" + (drv.pname or drv.name)));
-      }) packages;
-    };
+      retpre = {
+        packages = packages;
+        apps = builtins.mapAttrs
+          (n: drv: {
+          type = "app";
+          program = drv.outPath
+            + (drv.passthru.exePath or ("/bin/" + (drv.pname or drv.name)));
+        }) packages;
+      };
+    in retpre // (if defaultProgName == null then { }
+      else {
+        defaultPackage = retpre.packages.${defaultProgName};
+        defaultApp = retpre.apps.${defaultProgName};
+        devShell = allpkgs.mkShell {
+          buildInputs = allpkgs.${defaultProgName}.buildInputs;
+        };
+      })
+;
 
-  retall = eachSystem systems ret;
-  mapToDPN = builtins.mapAttrs (name: value: value.${defaultProgName});
-
-in { inherit overlay; } // retall // (
-  if defaultProgName == null then { }
-  else {
-    defaultPackage = mapToDPN retall.packages;
-    defaultApp = mapToDPN retall.apps;
-  }
-)
+in { inherit overlay; } // (eachSystem systems ret)
