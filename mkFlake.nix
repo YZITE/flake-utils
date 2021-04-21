@@ -1,3 +1,5 @@
+{ eachSystem }:
+
 { prevpkgs
 , overlay
 , defaultProgName ? null
@@ -5,23 +7,6 @@
 }:
 
 let
-  # inlined from github:numtide/flake-utils
-  eachSystem = f:
-    let
-      op = attrs: system:
-        let
-          ret = f system;
-          op = attrs: key:
-            attrs //
-            {
-              ${key} = (attrs.${key} or { }) // { ${system} = ret.${key}; };
-            }
-          ;
-        in
-        builtins.foldl' op attrs (builtins.attrNames ret);
-    in
-    builtins.foldl' op { } systems;
-
   dummyov = overlay {} {};
 
   ret = system:
@@ -42,7 +27,7 @@ let
       }) packages;
     };
 
-  retall = eachSystem ret;
+  retall = eachSystem systems ret;
   mapToDPN = builtins.mapAttrs (name: value: value.${defaultProgName});
 
 in { inherit overlay; } // retall // (
