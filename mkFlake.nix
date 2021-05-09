@@ -3,6 +3,7 @@
 { prevpkgs
 , overlay
 , defaultProgName ? null
+, contentAddressedByDefault ? true
 , systems ? prevpkgs.lib.platforms.all
 }:
 
@@ -13,6 +14,9 @@ let
     let
       allpkgs = import prevpkgs {
         inherit system;
+        config = {
+          inherit contentAddressedByDefault;
+        };
         overlays = [ overlay ];
       };
       packages = allpkgs.lib.attrsets.filterAttrs (n: v: dummyov ? ${n}) allpkgs;
