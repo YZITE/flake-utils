@@ -21,7 +21,7 @@ let
       };
       packages = allpkgs.lib.attrsets.filterAttrs (n: v: dummyov ? ${n}) allpkgs;
       retpre = {
-        packages = packages;
+        legacyPackages = packages;
         apps = builtins.mapAttrs
           (n: drv: {
           type = "app";
@@ -31,7 +31,7 @@ let
       };
     in retpre // (if defaultProgName == null then { }
       else {
-        defaultPackage = retpre.packages.${defaultProgName};
+        defaultPackage = retpre.legacyPackages.${defaultProgName};
         defaultApp = retpre.apps.${defaultProgName};
         devShell = allpkgs.mkShell {
           buildInputs = allpkgs.${defaultProgName}.buildInputs;
