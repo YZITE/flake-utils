@@ -3,6 +3,7 @@
 { prevpkgs
 , overlay
 , defaultProgName ? null
+, allowBroken ? false
 , contentAddressedByDefault ? true
 , systems ? prevpkgs.lib.platforms.all
 }:
@@ -15,7 +16,7 @@ let
       allpkgs = import prevpkgs {
         inherit system;
         config = {
-          inherit contentAddressedByDefault;
+          inherit allowBroken contentAddressedByDefault;
         };
         overlays = [ overlay ];
       };
