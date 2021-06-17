@@ -1,7 +1,7 @@
 {
   description = "yet another Nix flake-utils library";
   outputs = { self }: {
-    lib = import lib.nix;
+    lib = import ./lib.nix;
 
     templates = {
       rust = {
