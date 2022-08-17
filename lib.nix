@@ -19,9 +19,10 @@ rec {
   mkFlake = import ./mkFlake.nix { inherit eachSystem; };
   mkFlakeFromProg =
     { prevpkgs, progname, drvBuilder
+    , contentAddressedByDefault ? true
     , systems ? prevpkgs.lib.platforms.all
     }: mkFlake rec {
-      inherit prevpkgs systems;
+      inherit prevpkgs systems contentAddressedByDefault;
       overlay = final: prev: { ${progname} = drvBuilder final prev; };
       defaultProgName = progname;
     };
